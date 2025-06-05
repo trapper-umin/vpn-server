@@ -1,0 +1,91 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        register: true
+        health-check-interval: 10s
+        instance-id: ${spring.application.name}-${random.int}
+        service-name: ${spring.application.name}
+        
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      
+      routes:
+        # Auth Service Routes
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
+
+        # User Service Routes
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=2
+
+        # Subscription Service Routes
+        - id: subscription-service
+          uri: lb://subscription-service
+          predicates:
+            - Path=/api/subscription/**
+          filters:
+            - StripPrefix=2
+
+        # VPN Service Routes
+        - id: vpn-service
+          uri: lb://vpn-service
+          predicates:
+            - Path=/api/vpn/**
+          filters:
+            - StripPrefix=2
+
+        # Payment Service Routes
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - StripPrefix=2
+
+# JWT Configuration
+jwt:
+  secret: mySecretKey123456789012345678901234567890
+  expiration: 86400000 # 24 hours in milliseconds
+
+# Security Configuration
+security:
+  public-routes:
+    - /api/auth/**
+    - /api/payments/notify
+    - /actuator/health
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
