@@ -9,6 +9,20 @@ services:
     networks:
       - server-vpn
 
+  postgres-auth:
+    image: postgres:latest
+    container_name: auth-service-db1
+    hostname: postgres-auth
+    restart: always
+    environment:
+      POSTGRES_DB: auth-service
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 9qwe1ox
+    ports:
+      - "5433:5432"
+    networks:
+      - server-vpn
+
 networks:
   server-vpn:
     driver: bridge

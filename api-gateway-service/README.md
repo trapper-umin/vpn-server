@@ -14,7 +14,6 @@ API Gateway сервис является единой точкой входа �
 
 - Spring Cloud Gateway
 - Spring Cloud Consul Discovery
-- Spring Security WebFlux
 - JWT (jjwt)
 - Lombok
 
@@ -59,10 +58,7 @@ src/main/java/server/vpn/com/gateway/
 ├── config/              # Конфигурационные классы
 │   ├── JwtProperties.java
 │   ├── SecurityProperties.java
-│   ├── SecurityConfig.java
 │   └── GatewayConfig.java
-├── controller/          # REST контроллеры
-│   └── HealthController.java
 ├── security/           # Классы безопасности
 │   ├── JwtUtil.java
 │   └── JwtAuthenticationFilter.java
@@ -82,7 +78,7 @@ src/main/java/server/vpn/com/gateway/
 
 - Health check: `GET http://localhost:8080/actuator/health`
 - Gateway routes: `GET http://localhost:8080/actuator/gateway/routes`
-- Custom health: `GET http://localhost:8080/health`
+- Gateway info: `GET http://localhost:8080/actuator/info`
 
 ## Использование JWT
 
