@@ -14,8 +14,6 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/changelog.yml
-    default-schema: main
-    liquibase-schema: main
 
   jpa:
     properties:
@@ -23,7 +21,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: false
         show_sql: false
-        default_schema: auth
 
   cloud:
     consul:
@@ -40,6 +37,11 @@ spring:
 
   config:
     import: "optional:consul:"
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:myVerySecretKeyForJWTTokenSigningThisShouldBe256BitsLong}
+  expiration: ${JWT_EXPIRATION:604800000} # 7 дней в миллисекундах
 
 management:
   endpoints:
