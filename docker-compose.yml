@@ -7,22 +7,22 @@ services:
       - "8600:8600/udp"
     command: "agent -dev -client=0.0.0.0"
     networks:
-      - server-vpn
+      - guardex-network
 
-  postgres-auth:
+  postgres:
     image: postgres:latest
-    container_name: auth-service-db1
-    hostname: postgres-auth
+    container_name: postgres-guardex
+    hostname: postgres-guardex
     restart: always
     environment:
-      POSTGRES_DB: auth-service
+      POSTGRES_DB: postgres-guardex
       POSTGRES_USER: root
       POSTGRES_PASSWORD: 9qwe1ox
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
-      - server-vpn
+      - guardex-network
 
 networks:
-  server-vpn:
+  guardex-network:
     driver: bridge

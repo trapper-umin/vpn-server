@@ -26,3 +26,19 @@ management:
     web:
       exposure:
         include: health, prometheus
+
+# Service URLs Configuration
+services:
+  user-management:
+    url: ${USER_MANAGEMENT_SERVICE_URL:http://localhost:8081}
+
+# JWT Configuration (должен совпадать с user-management-service)
+jwt:
+  secret: ${JWT_SECRET:myVerySecretJWTKeyForVPNProject2024!@#$%^&*()_+}
+
+# Logging Configuration
+logging:
+  level:
+    server.vpn.com.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
+    org.springframework.web.cors: DEBUG

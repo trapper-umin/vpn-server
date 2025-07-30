@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: migrations/2025-07-29_create_schema.sql
+      relativeToChangelogFile: true

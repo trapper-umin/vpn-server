@@ -29,7 +29,7 @@
 
     <modules>
         <module>api-gateway-service</module>
-        <module>auth-service</module>
+        <module>user-management-service</module>
     </modules>
 
     <dependencyManagement>
