@@ -1,4 +1,10 @@
 databaseChangeLog:
   - include:
-      file: migrations/2025-07-29_create_schema.sql
+      file: migrations/2025-07-29_create_users_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/2025-07-30_create_refresh_token_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/2025-07-30_create_blacklisted_tokens_table.sql
       relativeToChangelogFile: true

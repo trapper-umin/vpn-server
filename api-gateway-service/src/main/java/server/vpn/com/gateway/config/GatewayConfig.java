@@ -47,6 +47,17 @@ public class GatewayConfig {
                         )
                         .uri(userManagementServiceUrl)
                 )
+                .route("auth-refresh", r -> r
+                        .path("/api/auth/refresh")
+                        .and()
+                        .method("POST")
+                        .filters(f -> f
+                                .stripPrefix(0)
+                                .addRequestHeader("X-Gateway-Source", "api-gateway")
+                                .addRequestHeader("X-Route-Name", "auth-refresh")
+                        )
+                        .uri(userManagementServiceUrl)
+                )
                 // Защищенные маршруты с JWT аутентификацией
                 .route("auth-profile", r -> r
                         .path("/api/auth/profile")
@@ -67,6 +78,8 @@ public class GatewayConfig {
                         .not(p -> p.path("/api/auth/register"))
                         .and()
                         .not(p -> p.path("/api/auth/login"))
+                        .and()
+                        .not(p -> p.path("/api/auth/refresh"))
                         .filters(f -> f
                                 .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
                                 .stripPrefix(0)

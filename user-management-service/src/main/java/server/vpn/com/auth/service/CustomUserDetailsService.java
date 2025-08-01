@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import server.vpn.com.auth.repository.UserRepository;
 
+import static server.vpn.com.auth.util.enums.Constant.INVALID_EMAIL_MESSAGE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -17,12 +19,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.debug("Загрузка пользователя по email: {}", email);
         
         return userRepository.findByEmailAndIsActiveTrue(email)
-                .orElseThrow(() -> {
-                    log.warn("Пользователь не найден: {}", email);
-                    return new UsernameNotFoundException("Пользователь с email " + email + " не найден");
-                });
+                .orElseThrow(() -> new UsernameNotFoundException(INVALID_EMAIL_MESSAGE));
     }
 }

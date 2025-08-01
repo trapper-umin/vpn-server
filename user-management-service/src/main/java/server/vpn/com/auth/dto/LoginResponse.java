@@ -14,10 +14,13 @@ public class LoginResponse {
     private String token;
     @Builder.Default
     private String type = "Bearer";
+    private String refreshToken;
     private UserProfileResponse user;
 
-    public LoginResponse(String token, UserProfileResponse user) {
+    public LoginResponse(String token, String refreshToken, UserProfileResponse user) {
         this.token = token;
+        this.refreshToken = refreshToken;
         this.user = user;
+        this.type = "Bearer";
     }
 }

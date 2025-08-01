@@ -1,4 +1,4 @@
-package server.vpn.com.auth.exception;
+package server.vpn.com.auth.controller.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,6 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import server.vpn.com.auth.dto.ErrorResponse;
+import server.vpn.com.auth.exception.InvalidCredentialsException;
+import server.vpn.com.auth.exception.UserAlreadyExistsException;
 
 import java.util.HashMap;
 import java.util.Map;
