@@ -31,6 +31,7 @@ public class JwtUtil {
     private final UserRepository userRepository;
 
     private static final String TOKEN_VERSION = "token_version";
+    public static final String REFRESH_TOKEN_ID = "refresh_token_id";
 
     @Value("${jwt.secret:myDefaultSecretKeyThatShouldBeReplacedInProduction123456789}")
     private String secret;
@@ -79,6 +80,14 @@ public class JwtUtil {
     public String generateToken(UserDetails userDetails, Long tokenVersion) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(TOKEN_VERSION, tokenVersion);
+
+        return createToken(claims, userDetails.getUsername());
+    }
+
+    public String generateToken(UserDetails userDetails, Long tokenVersion, Long refreshTokenId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(TOKEN_VERSION, tokenVersion);
+        claims.put(REFRESH_TOKEN_ID, refreshTokenId);
 
         return createToken(claims, userDetails.getUsername());
     }

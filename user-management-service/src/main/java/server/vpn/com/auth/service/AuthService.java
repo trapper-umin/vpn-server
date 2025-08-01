@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static server.vpn.com.auth.util.HeadersUtil.*;
+import static server.vpn.com.auth.util.JwtUtil.REFRESH_TOKEN_ID;
 import static server.vpn.com.auth.util.enums.Constant.*;
 
 @Slf4j
@@ -56,8 +57,8 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        String accessToken = jwtUtil.generateToken(savedUser, savedUser.getTokenVersion());
         RefreshToken refreshToken = sessionManagementService.createRefreshToken(savedUser, deviceInfo, ipAddress);
+        String accessToken = jwtUtil.generateToken(savedUser, savedUser.getTokenVersion(), refreshToken.getId());
         UserProfileResponse userProfile = userMapper.toProfileResponse(savedUser);
 
         return new LoginResponse(accessToken, refreshToken.getToken(), userProfile);
@@ -81,8 +82,8 @@ public class AuthService {
             throw new InvalidCredentialsException(INVALID_PASSWORD_MESSAGE);
         }
 
-        String accessToken = jwtUtil.generateToken(user,  user.getTokenVersion());
         RefreshToken refreshToken = sessionManagementService.createRefreshToken(user, deviceInfo, ipAddress);
+        String accessToken = jwtUtil.generateToken(user, user.getTokenVersion(), refreshToken.getId());
 
         UserProfileResponse userProfile = userMapper.toProfileResponse(user);
 
@@ -138,7 +139,7 @@ public class AuthService {
         RefreshToken refreshToken = sessionManagementService.validateRefreshToken(request.getRefreshToken());
         User user = refreshToken.getUser();
 
-        String newAccessToken = jwtUtil.generateToken(user);
+        String newAccessToken = jwtUtil.generateToken(user); //todo потенциальная ошибка, так как в токине нет нужных climbs
 
         RefreshToken newRefreshToken = sessionManagementService.createRefreshToken(
             user, 
@@ -162,22 +163,10 @@ public class AuthService {
         
         List<RefreshToken> activeSessions = sessionManagementService.getActiveSessions(user);
 
-        String currentRefreshTokenId = null;
-        if (currentAccessToken != null) {
-            try {
-                currentRefreshTokenId = activeSessions.stream()
-                        .max((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()))
-                        .map(RefreshToken::getToken)
-                        .orElse(null);
-            } catch (Exception e) {
-                log.warn("Ошибка определения текущей сессии: {}", e.getMessage()); //todo сделать нормальное определение текущей сессии
-            }
-        }
-        
-        final String finalCurrentRefreshTokenId = currentRefreshTokenId;
+        Long currentRefreshTokenId = jwtUtil.extractClaim(currentAccessToken, claims -> claims.get(REFRESH_TOKEN_ID, Long.class)); // todo вынести в метод
         return activeSessions.stream()
                 .map(token ->
-                        refreshTokenMapper.toSessionResponse(token, token.getToken().equals(finalCurrentRefreshTokenId)))
+                        refreshTokenMapper.toSessionResponse(token, token.getId().equals(currentRefreshTokenId)))
                 .collect(Collectors.toList());
     }
 
