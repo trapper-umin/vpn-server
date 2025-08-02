@@ -113,4 +113,15 @@ public class AuthController {
                 .status(HttpStatus.OK)
                 .body(Map.of("message", "Session revoked"));
     }
+
+    @DeleteMapping("/account")
+    public ResponseEntity<Map<String, String>> deleteAccount(Authentication authentication, HttpServletRequest httpRequest) {
+        log.info(DELETE_ACCOUNT_REQUEST_MESSAGE, authentication.getName());
+        
+        authService.deleteAccount(authentication.getName(), httpRequest);
+        
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(Map.of("message", ACCOUNT_DELETED_MESSAGE));
+    }
 }

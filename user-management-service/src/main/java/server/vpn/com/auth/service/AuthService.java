@@ -48,7 +48,7 @@ public class AuthService {
         String deviceInfo = extractDeviceInfo(httpRequest);
         String ipAddress = extractIpAddress(httpRequest);
 
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmailAndIsActiveTrue(request.getEmail())) {
             throw new UserAlreadyExistsException(USER_ALREADY_EXIST_MESSAGE);
         }
 
@@ -183,5 +183,24 @@ public class AuthService {
                 .orElseThrow(() -> new InvalidCredentialsException(SESSION_NOT_FOUND_MESSAGE));
         
         sessionManagementService.revokeRefreshToken(sessionToRevoke);
+    }
+
+    @Transactional
+    public void deleteAccount(String email, HttpServletRequest httpRequest) {
+        String accessToken = extractAccessToken(httpRequest);
+        
+        User user = userRepository.findByEmailAndIsActiveTrue(email)
+                .orElseThrow(() -> new UsernameNotFoundException(INVALID_EMAIL_MESSAGE));
+
+        user.setIsActive(false);
+        userRepository.save(user);
+
+        sessionManagementService.revokeAllRefreshTokens(user);
+
+        userRepository.incrementTokenVersion(user.getId());
+
+        if (accessToken != null) {
+            jwtUtil.addTokenToBlacklist(accessToken);
+        }
     }
 }

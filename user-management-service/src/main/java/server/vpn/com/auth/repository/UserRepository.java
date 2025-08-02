@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param email email пользователя
      * @return boolean
      */
-    boolean existsByEmail(String email);
+    boolean existsByEmailAndIsActiveTrue(String email);
 
     /**
      * Поиск активного пользователя по email

@@ -10,8 +10,10 @@ public class Constant {
     public final static String REFRESH_TOKEN_REQUEST_MESSAGE = "POST /api/auth/refresh - token update";
     public final static String GET_SESSIONS_REQUEST_MESSAGE = "GET /api/auth/sessions - getting active sessions: {}";
     public final static String REVOKE_SESSION_REQUEST_MESSAGE = "DELETE /api/auth/sessions/{} - revoking a session: {}";
+    public final static String DELETE_ACCOUNT_REQUEST_MESSAGE = "DELETE /api/auth/account - deleting account: {}";
 
     public final static String USER_ALREADY_EXIST_MESSAGE = "The user with this email already exists";
+    public final static String ACCOUNT_DELETED_MESSAGE = "Account has been successfully deleted";
     public final static String INVALID_EMAIL_MESSAGE = "This email does not exist";
     public final static String INVALID_PASSWORD_MESSAGE = "Invalid password";
     public final static String INVALID_REFRESH_TOKEN_MESSAGE = "Refresh token does not exist";
