@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -21,9 +22,9 @@ import java.util.Collections;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
+    @GeneratedValue
+    @Column(name = "user_id", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(unique = true, nullable = false, length = 255)
     private String email;
