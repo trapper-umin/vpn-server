@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.vpn.com.auth.dto.*;
 import server.vpn.com.auth.entity.RefreshToken;
 import server.vpn.com.auth.entity.User;
+import server.vpn.com.auth.entity.UserRole;
 import server.vpn.com.auth.exception.InvalidCredentialsException;
 import server.vpn.com.auth.exception.UserAlreadyExistsException;
 import server.vpn.com.auth.mapper.RefreshTokenMapper;
@@ -202,5 +203,24 @@ public class AuthService {
         if (accessToken != null) {
             jwtUtil.addTokenToBlacklist(accessToken);
         }
+    }
+
+    @Transactional
+    public UserProfileResponse becomeSeller(String userEmail, BecomeSellerRequest request) {
+        if (!request.getIsSelfEmployed()) {
+            throw new IllegalArgumentException("Для получения роли продавца необходимо подтвердить статус самозанятого"); //todo
+        }
+        
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException(INVALID_EMAIL_MESSAGE));
+        
+        if (user.getRole() == UserRole.SELLER) {
+            throw new IllegalArgumentException("Пользователь уже является продавцом"); // todo
+        }
+
+        user.setRole(UserRole.SELLER);
+        userRepository.save(user);
+        
+        return userMapper.toProfileResponse(user);
     }
 }

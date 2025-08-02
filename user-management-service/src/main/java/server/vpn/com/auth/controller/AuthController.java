@@ -124,4 +124,16 @@ public class AuthController {
                 .status(HttpStatus.OK)
                 .body(Map.of("message", ACCOUNT_DELETED_MESSAGE));
     }
+
+    @PostMapping("/become-seller")
+    public ResponseEntity<UserProfileResponse> becomeSeller(@Valid @RequestBody BecomeSellerRequest request,
+                                                           Authentication authentication) {
+        log.info(BECOME_SELLER_REQUEST_MESSAGE, authentication.getName());
+        
+        UserProfileResponse response = authService.becomeSeller(authentication.getName(), request);
+        
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
 }

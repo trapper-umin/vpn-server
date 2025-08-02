@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import server.vpn.com.auth.entity.UserRole;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -18,4 +19,5 @@ public class UserProfileResponse {
     private String email;
     private OffsetDateTime createdAt;
     private Boolean isActive;
+    private UserRole role;
 }
