@@ -30,6 +30,7 @@
     <modules>
         <module>api-gateway-service</module>
         <module>user-management-service</module>
+        <module>vpn-management-service</module>
     </modules>
 
     <dependencyManagement>
