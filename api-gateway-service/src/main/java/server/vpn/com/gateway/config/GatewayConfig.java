@@ -17,6 +17,9 @@ public class GatewayConfig {
     @Value("${services.user-management.url:http://localhost:8081}")
     private String userManagementServiceUrl;
 
+    @Value("${services.vpn-management.url:http://localhost:8082}")
+    private String vpnManagementServiceUrl;
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
@@ -88,7 +91,45 @@ public class GatewayConfig {
                         )
                         .uri(userManagementServiceUrl)
                 )
-                // Health check маршрут
+                // VPN Management Service маршруты (защищенные)
+                .route("vpn-management-seller", r -> r
+                        .path("/api/vpn/seller/**")
+                        .filters(f -> f
+                                .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
+                                .stripPrefix(0)
+                                .addRequestHeader("X-Gateway-Source", "api-gateway")
+                                .addRequestHeader("X-Route-Name", "vpn-management-seller")
+                        )
+                        .uri(vpnManagementServiceUrl)
+                )
+                // VPN Management Service маркетплейс (публичные)
+                .route("vpn-management-marketplace", r -> r
+                        .path("/api/vpn/marketplace/**")
+                        .filters(f -> f
+                                .stripPrefix(0)
+                                .addRequestHeader("X-Gateway-Source", "api-gateway")
+                                .addRequestHeader("X-Route-Name", "vpn-management-marketplace")
+                        )
+                        .uri(vpnManagementServiceUrl)
+                )
+                // Health check маршруты для обоих сервисов
+                .route("health-check-user", r -> r
+                        .path("/actuator/health/user")
+                        .filters(f -> f
+                                .stripPrefix(2) // убираем /actuator/health/user -> /actuator/health
+                                .addRequestHeader("X-Gateway-Source", "api-gateway")
+                        )
+                        .uri(userManagementServiceUrl)
+                )
+                .route("health-check-vpn", r -> r
+                        .path("/actuator/health/vpn")
+                        .filters(f -> f
+                                .stripPrefix(2) // убираем /actuator/health/vpn -> /actuator/health
+                                .addRequestHeader("X-Gateway-Source", "api-gateway")
+                        )
+                        .uri(vpnManagementServiceUrl)
+                )
+                // Общий health check (проверяет user-management по умолчанию)
                 .route("health-check", r -> r
                         .path("/actuator/health")
                         .filters(f -> f

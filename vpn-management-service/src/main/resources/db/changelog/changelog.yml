@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - include:
+      file: migrations/2025-08-02_create_vpn_servers_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/2025-08-02_create_subscription_plans_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/2025-08-02_create_subscription_plan_features_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/2025-08-02_create_vpn_subscriptions_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/2025-08-02_create_sales_records_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/2025-08-02_create_vpn_server_features_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/2025-08-02_create_vpn_server_protocols_table.sql
+      relativeToChangelogFile: true

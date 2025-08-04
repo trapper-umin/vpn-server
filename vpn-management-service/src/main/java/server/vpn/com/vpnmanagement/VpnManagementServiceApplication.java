@@ -1,4 +1,4 @@
-package server.vpn.com.vpnmanagementservice;
+package server.vpn.com.vpnmanagement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
