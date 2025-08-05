@@ -53,4 +53,19 @@ public interface VpnSubscriptionRepository extends JpaRepository<VpnSubscription
      * Поиск активной подписки по пользователю и плану
      */
     List<VpnSubscription> findByUserIdAndPlan_IdAndIsActiveTrue(UUID userId, UUID planId);
+
+    /**
+     * Поиск всех подписок пользователя
+     */
+    List<VpnSubscription> findByUserIdOrderByCreatedAtDesc(UUID userId);
+
+    /**
+     * Поиск активных подписок пользователя
+     */
+    List<VpnSubscription> findByUserIdAndIsActiveTrueOrderByCreatedAtDesc(UUID userId);
+
+    /**
+     * Подсчет активных подписок пользователя
+     */
+    long countByUserIdAndIsActiveTrue(UUID userId);
 }

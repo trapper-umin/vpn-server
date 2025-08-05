@@ -324,4 +324,81 @@ public class VpnManagementController {
         
         return ResponseEntity.ok(response);
     }
+
+    // ==================== ПОЛЬЗОВАТЕЛЬСКИЕ ENDPOINTS ====================
+
+    /**
+     * Получение подписок пользователя
+     */
+    @GetMapping("/user/subscriptions")
+    public ResponseEntity<List<UserSubscriptionResponse>> getUserSubscriptions(Authentication authentication) {
+        log.info("Запрос подписок пользователя: {}", authentication.getName());
+        
+        UUID userId = jwtUtil.extractUserIdFromEmail(authentication.getName());
+        List<UserSubscriptionResponse> subscriptions = vpnManagementService.getUserSubscriptions(userId);
+        
+        return ResponseEntity.ok(subscriptions);
+    }
+
+    /**
+     * Получение статуса подписок пользователя
+     */
+    @GetMapping("/user/subscription-status")
+    public ResponseEntity<UserSubscriptionStatusResponse> getUserSubscriptionStatus(Authentication authentication) {
+        log.info("Запрос статуса подписок пользователя: {}", authentication.getName());
+        
+        UUID userId = jwtUtil.extractUserIdFromEmail(authentication.getName());
+        UserSubscriptionStatusResponse status = vpnManagementService.getUserSubscriptionStatus(userId);
+        
+        return ResponseEntity.ok(status);
+    }
+
+    /**
+     * Продление подписки пользователя
+     */
+    @PostMapping("/user/subscriptions/{subscriptionId}/extend")
+    public ResponseEntity<Map<String, String>> extendUserSubscription(
+            @PathVariable UUID subscriptionId,
+            @RequestParam(defaultValue = "1") int months,
+            Authentication authentication) {
+        log.info("Продление подписки {} пользователем: {} на {} месяцев", subscriptionId, authentication.getName(), months);
+        
+        UUID userId = jwtUtil.extractUserIdFromEmail(authentication.getName());
+        vpnManagementService.extendUserSubscription(userId, subscriptionId, months);
+        
+        return ResponseEntity.ok(Map.of("message", "Подписка успешно продлена"));
+    }
+
+    /**
+     * Получение VPN конфигурации для подписки
+     */
+    @GetMapping("/user/subscriptions/{subscriptionId}/config")
+    public ResponseEntity<String> getVpnConfig(
+            @PathVariable UUID subscriptionId,
+            Authentication authentication) {
+        log.info("Запрос VPN конфигурации для подписки {} пользователем: {}", subscriptionId, authentication.getName());
+        
+        UUID userId = jwtUtil.extractUserIdFromEmail(authentication.getName());
+        String config = vpnManagementService.generateVpnConfig(userId, subscriptionId);
+        
+        return ResponseEntity.ok()
+                .header("Content-Type", "text/plain")
+                .header("Content-Disposition", "attachment; filename=vpn-config-" + subscriptionId + ".conf")
+                .body(config);
+    }
+
+    /**
+     * Перегенерация VPN ключей для подписки
+     */
+    @PostMapping("/user/subscriptions/{subscriptionId}/regenerate")
+    public ResponseEntity<Map<String, String>> regenerateVpnConfig(
+            @PathVariable UUID subscriptionId,
+            Authentication authentication) {
+        log.info("Перегенерация VPN ключей для подписки {} пользователем: {}", subscriptionId, authentication.getName());
+        
+        UUID userId = jwtUtil.extractUserIdFromEmail(authentication.getName());
+        vpnManagementService.regenerateVpnConfig(userId, subscriptionId);
+        
+        return ResponseEntity.ok(Map.of("message", "VPN ключи успешно перегенерированы"));
+    }
 }
