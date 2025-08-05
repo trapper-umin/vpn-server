@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.vpn.com.vpnmanagement.client.UserManagementClient;
 import server.vpn.com.vpnmanagement.dto.CreateSubscriptionPlanRequest;
+import server.vpn.com.vpnmanagement.dto.PurchaseResponse;
 import server.vpn.com.vpnmanagement.dto.SubscriptionPlanResponse;
 import server.vpn.com.vpnmanagement.dto.UserProfileDto;
 import server.vpn.com.vpnmanagement.entity.*;
@@ -15,6 +16,7 @@ import server.vpn.com.vpnmanagement.repository.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -165,11 +167,16 @@ public class SubscriptionPlanService {
      * Покупка плана подписки
      */
     @Transactional
-    public void purchasePlan(UUID userId, UUID planId, String billingCycle, String authHeader) {
+    public PurchaseResponse purchasePlan(UUID userId, UUID planId, String billingCycle, String authHeader) {
         log.info("Покупка плана {} пользователем {} на период {}", planId, userId, billingCycle);
         
         SubscriptionPlan plan = subscriptionPlanRepository.findById(planId)
                 .orElseThrow(() -> new IllegalArgumentException("План не найден"));
+        
+        // Проверяем, что пользователь не является продавцом этого плана
+        if (userId.equals(plan.getServer().getSellerId())) {
+            throw new IllegalArgumentException("Продавец не может покупать свои собственные планы");
+        }
         
         // Проверки доступности плана
         if (!plan.getIsActive()) {
@@ -256,5 +263,97 @@ public class SubscriptionPlanService {
         salesRecordRepository.save(salesRecord);
         
         log.info("План {} успешно приобретен пользователем {} за {}", planId, userId, price);
+        
+        // Формируем подробный ответ
+        return buildPurchaseResponse(subscription, plan, server, userProfile, price, cycle);
+    }
+
+    /**
+     * Формирование подробного ответа о покупке
+     */
+    private PurchaseResponse buildPurchaseResponse(VpnSubscription subscription, SubscriptionPlan plan, 
+                                                 VpnServer server, UserProfileDto userProfile, 
+                                                 BigDecimal price, VpnSubscription.BillingCycle cycle) {
+        
+        // Вычисляем экономию при годовой подписке
+        BigDecimal savings = BigDecimal.ZERO;
+        if (cycle == VpnSubscription.BillingCycle.YEARLY) {
+            savings = plan.getMonthlyPrice().multiply(BigDecimal.valueOf(12)).subtract(plan.getYearlyPrice());
+        }
+        
+        // Количество дней подписки
+        int daysTotal = (int) ChronoUnit.DAYS.between(subscription.getStartDate(), subscription.getEndDate());
+        
+        return PurchaseResponse.builder()
+                .subscriptionId(subscription.getId().toString())
+                .message("Поздравляем! VPN подписка успешно активирована")
+                .plan(PurchaseResponse.PlanInfo.builder()
+                        .id(plan.getId().toString())
+                        .name(plan.getName())
+                        .type(plan.getType().name().toLowerCase())
+                        .maxConnections(plan.getMaxConnections())
+                        .bandwidthLimit(plan.getBandwidthLimit())
+                        .speedLimit(plan.getSpeedLimit())
+                        .build())
+                .server(PurchaseResponse.ServerInfo.builder()
+                        .id(server.getId().toString())
+                        .name(server.getName())
+                        .country(server.getCountry())
+                        .city(server.getCity())
+                        .flag(getCountryFlag(server.getCountryCode()))
+                        .ipAddress(server.getIpAddress())
+                        .ping(server.getPing())
+                        .uptime(server.getUptime())
+                        .build())
+                .subscription(PurchaseResponse.SubscriptionInfo.builder()
+                        .billingCycle(cycle.name().toLowerCase())
+                        .startDate(subscription.getStartDate())
+                        .endDate(subscription.getEndDate())
+                        .daysTotal(daysTotal)
+                        .isActive(subscription.getIsActive())
+                        .userEmail(userProfile.getEmail())
+                        .build())
+                .payment(PurchaseResponse.PaymentInfo.builder()
+                        .amount(price)
+                        .currency("USD")
+                        .billingCycle(cycle.name().toLowerCase())
+                        .savings(savings)
+                        .paymentDate(OffsetDateTime.now())
+                        .build())
+                .build();
+    }
+
+    /**
+     * Получение флага страны по коду
+     */
+    private String getCountryFlag(String countryCode) {
+        if (countryCode == null || countryCode.length() != 2) {
+            return "🏳️";
+        }
+        
+        return switch (countryCode.toUpperCase()) {
+            case "US" -> "🇺🇸";
+            case "DE" -> "🇩🇪";
+            case "GB" -> "🇬🇧";
+            case "JP" -> "🇯🇵";
+            case "CA" -> "🇨🇦";
+            case "FR" -> "🇫🇷";
+            case "NL" -> "🇳🇱";
+            case "CH" -> "🇨🇭";
+            case "SG" -> "🇸🇬";
+            case "AU" -> "🇦🇺";
+            case "SE" -> "🇸🇪";
+            case "NO" -> "🇳🇴";
+            case "DK" -> "🇩🇰";
+            case "FI" -> "🇫🇮";
+            case "IT" -> "🇮🇹";
+            case "ES" -> "🇪🇸";
+            case "BR" -> "🇧🇷";
+            case "IN" -> "🇮🇳";
+            case "KR" -> "🇰🇷";
+            case "HK" -> "🇭🇰";
+            case "RU" -> "🇷🇺";
+            default -> "🏳️";
+        };
     }
 }

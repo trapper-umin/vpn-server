@@ -311,7 +311,7 @@ public class VpnManagementController {
      * Покупка плана подписки
      */
     @PostMapping("/marketplace/plans/{planId}/purchase")
-    public ResponseEntity<Map<String, String>> purchasePlan(
+    public ResponseEntity<PurchaseResponse> purchasePlan(
             @PathVariable UUID planId,
             @Valid @RequestBody PurchasePlanRequest request,
             Authentication authentication,
@@ -320,8 +320,8 @@ public class VpnManagementController {
         
         UUID userId = jwtUtil.extractUserIdFromEmail(authentication.getName());
         String authHeader = httpRequest.getHeader("Authorization");
-        subscriptionPlanService.purchasePlan(userId, planId, request.getBillingCycle(), authHeader);
+        PurchaseResponse response = subscriptionPlanService.purchasePlan(userId, planId, request.getBillingCycle(), authHeader);
         
-        return ResponseEntity.ok(Map.of("message", "План успешно приобретен"));
+        return ResponseEntity.ok(response);
     }
 }
