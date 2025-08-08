@@ -1,8 +1,8 @@
-package server.vpn.com.vpnmanagement.mapper;
+package server.vpn.com.vpnmanagement.dto.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import server.vpn.com.vpnmanagement.dto.SalesDataResponse;
+import server.vpn.com.vpnmanagement.dto.response.SalesDataResponse;
 import server.vpn.com.vpnmanagement.entity.SalesRecord;
 
 import java.util.List;

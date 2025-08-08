@@ -104,18 +104,18 @@ public class GatewayConfig {
                 )
                 // VPN Management Service пользовательские маршруты (защищенные)
                 .route("vpn-management-user", r -> r
-                        .path("/api/vpn/user/**")
+                        .path("/api/v1/servers/**", "/api/v1/sellers/**", "/api/v1/users/**")
                         .filters(f -> f
                                 .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
                                 .stripPrefix(0)
                                 .addRequestHeader("X-Gateway-Source", "api-gateway")
-                                .addRequestHeader("X-Route-Name", "vpn-management-user")
+                                .addRequestHeader("X-Route-Name", "vpn-management-service")
                         )
                         .uri(vpnManagementServiceUrl)
                 )
                 // VPN Management Service маркетплейс (публичные)
                 .route("vpn-management-marketplace", r -> r
-                        .path("/api/vpn/marketplace/**")
+                        .path("/api/v1/marketplace/subscriptions/**")
                         .filters(f -> f
                                 .stripPrefix(0)
                                 .addRequestHeader("X-Gateway-Source", "api-gateway")

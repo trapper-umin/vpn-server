@@ -36,7 +36,7 @@ public class UserManagementClient {
             String url = userManagementServiceUrl + "/api/auth/profile";
             
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", authHeader);
+            headers.set(HttpHeaders.AUTHORIZATION, authHeader);
             
             HttpEntity<Void> entity = new HttpEntity<>(headers);
             
@@ -46,8 +46,7 @@ public class UserManagementClient {
                     entity,
                     UserProfileDto.class
             );
-            
-            log.debug("Получен профиль пользователя: {}", response.getBody());
+
             return response.getBody();
         } catch (Exception e) {
             log.error("Ошибка при получении профиля пользователя: {}", e.getMessage());

@@ -1,11 +1,12 @@
-package server.vpn.com.vpnmanagement.mapper;
+package server.vpn.com.vpnmanagement.dto.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import server.vpn.com.vpnmanagement.dto.CreateSubscriptionPlanRequest;
-import server.vpn.com.vpnmanagement.dto.SubscriptionPlanResponse;
+import server.vpn.com.vpnmanagement.dto.request.CreateSubscriptionPlanRequest;
+import server.vpn.com.vpnmanagement.dto.response.SubscriptionResponse;
 import server.vpn.com.vpnmanagement.entity.SubscriptionPlan;
+import server.vpn.com.vpnmanagement.util.CountryCodeFlag;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -22,9 +23,9 @@ public interface SubscriptionPlanMapper {
     @Mapping(target = "serverFlag", source = "server.countryCode", qualifiedByName = "countryCodeToFlag")
     @Mapping(target = "type", source = "type", qualifiedByName = "planTypeToString")
     @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "offsetDateTimeToLocalDate")
-    SubscriptionPlanResponse toSubscriptionPlanResponse(SubscriptionPlan plan);
+    SubscriptionResponse toSubscriptionPlanResponse(SubscriptionPlan plan);
 
-    List<SubscriptionPlanResponse> toSubscriptionPlanResponseList(List<SubscriptionPlan> plans);
+    List<SubscriptionResponse> toSubscriptionPlanResponseList(List<SubscriptionPlan> plans);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "server", ignore = true)
@@ -59,33 +60,6 @@ public interface SubscriptionPlanMapper {
 
     @Named("countryCodeToFlag")
     default String countryCodeToFlag(String countryCode) {
-        if (countryCode == null || countryCode.length() != 2) {
-            return "🏳️";
-        }
-        
-        return switch (countryCode.toUpperCase()) {
-            case "US" -> "🇺🇸";
-            case "DE" -> "🇩🇪";
-            case "GB" -> "🇬🇧";
-            case "JP" -> "🇯🇵";
-            case "CA" -> "🇨🇦";
-            case "FR" -> "🇫🇷";
-            case "NL" -> "🇳🇱";
-            case "CH" -> "🇨🇭";
-            case "SG" -> "🇸🇬";
-            case "AU" -> "🇦🇺";
-            case "SE" -> "🇸🇪";
-            case "NO" -> "🇳🇴";
-            case "DK" -> "🇩🇰";
-            case "FI" -> "🇫🇮";
-            case "IT" -> "🇮🇹";
-            case "ES" -> "🇪🇸";
-            case "BR" -> "🇧🇷";
-            case "IN" -> "🇮🇳";
-            case "KR" -> "🇰🇷";
-            case "HK" -> "🇭🇰";
-            case "RU" -> "🇷🇺";
-            default -> "🏳️";
-        };
+        return CountryCodeFlag.getCountryFlag(countryCode);
     }
 }

@@ -1,4 +1,4 @@
-package server.vpn.com.vpnmanagement.dto;
+package server.vpn.com.vpnmanagement.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,20 +11,20 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WireGuardDeploymentResponse {
+public class ServerTestingResponse {
 
     private Boolean success;
-    private List<DeploymentStep> steps;
-    private String error;
+    private List<TestResult> tests;
+    private String overallStatus; // 'running', 'passed', 'failed'
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DeploymentStep {
+    public static class TestResult {
         private String id;
         private String name;
-        private String status; // 'pending', 'running', 'completed', 'error'
+        private String status; // 'pending', 'running', 'passed', 'failed'
         private String details;
         private List<String> logs;
         private String error;

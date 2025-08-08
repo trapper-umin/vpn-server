@@ -1,11 +1,12 @@
-package server.vpn.com.vpnmanagement.mapper;
+package server.vpn.com.vpnmanagement.dto.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import server.vpn.com.vpnmanagement.dto.CreateServerRequest;
-import server.vpn.com.vpnmanagement.dto.SellerServerResponse;
+import server.vpn.com.vpnmanagement.dto.request.CreateServerRequest;
+import server.vpn.com.vpnmanagement.dto.response.SellerServerResponse;
 import server.vpn.com.vpnmanagement.entity.VpnServer;
+import server.vpn.com.vpnmanagement.util.CountryCodeFlag;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -58,34 +59,6 @@ public interface VpnServerMapper {
 
     @Named("countryCodeToFlag")
     default String countryCodeToFlag(String countryCode) {
-        if (countryCode == null || countryCode.length() != 2) {
-            return "🏳️";
-        }
-        
-        // Mapping some common country codes to flags
-        return switch (countryCode.toUpperCase()) {
-            case "US" -> "🇺🇸";
-            case "DE" -> "🇩🇪";
-            case "GB" -> "🇬🇧";
-            case "JP" -> "🇯🇵";
-            case "CA" -> "🇨🇦";
-            case "FR" -> "🇫🇷";
-            case "NL" -> "🇳🇱";
-            case "CH" -> "🇨🇭";
-            case "SG" -> "🇸🇬";
-            case "AU" -> "🇦🇺";
-            case "SE" -> "🇸🇪";
-            case "NO" -> "🇳🇴";
-            case "DK" -> "🇩🇰";
-            case "FI" -> "🇫🇮";
-            case "IT" -> "🇮🇹";
-            case "ES" -> "🇪🇸";
-            case "BR" -> "🇧🇷";
-            case "IN" -> "🇮🇳";
-            case "KR" -> "🇰🇷";
-            case "HK" -> "🇭🇰";
-            case "RU" -> "🇷🇺";
-            default -> "🏳️";
-        };
+        return CountryCodeFlag.getCountryFlag(countryCode);
     }
 }

@@ -1,4 +1,4 @@
-package server.vpn.com.vpnmanagement.dto;
+package server.vpn.com.vpnmanagement.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubscriptionPlanResponse {
+public class SubscriptionResponse {
 
     private String id;
     private String name;

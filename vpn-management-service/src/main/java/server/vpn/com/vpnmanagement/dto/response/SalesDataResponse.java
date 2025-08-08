@@ -1,4 +1,4 @@
-package server.vpn.com.vpnmanagement.dto;
+package server.vpn.com.vpnmanagement.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,5 @@
-package server.vpn.com.vpnmanagement.dto;
+package server.vpn.com.vpnmanagement.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class PurchasePlanRequest {
 
     @NotNull(message = "Тип тарификации обязателен")
-    private String billingCycle; // "monthly" или "yearly"
+    private String billingCycle;
 }
