@@ -32,8 +32,7 @@ public class CorsConfig {
         corsConfig.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:3000",    // React dev server
                 "http://localhost:5173",    // Alternative React port
-                "https://*.guardex.com",    // Production domain
-                "https://guardex.com"       // Production domain without subdomain
+                "https://*.guardex.com"    // Production domain
         ));
         
         // Разрешенные методы
