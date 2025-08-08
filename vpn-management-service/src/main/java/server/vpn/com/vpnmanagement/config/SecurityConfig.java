@@ -28,8 +28,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/vpn/marketplace/**").authenticated() // Маркетплейс доступен всем авторизованным
-                        .requestMatchers("/api/vpn/seller/**").hasRole("SELLER")   // Seller эндпоинты только для продавцов
+                        .requestMatchers("/api/v1/vpn/marketplace/**").authenticated() // Маркетплейс доступен всем авторизованным
+                        .requestMatchers("/api/v1/vpn/seller/**").hasRole("SELLER")   // Seller эндпоинты только для продавцов
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

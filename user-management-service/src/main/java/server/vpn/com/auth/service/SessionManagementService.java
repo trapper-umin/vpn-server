@@ -31,7 +31,6 @@ import static server.vpn.com.auth.util.enums.Constant.*;
 public class SessionManagementService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final BlacklistedTokenRepository blacklistedTokenRepository;
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Value("${jwt.refresh-expiration:2592000000}")
@@ -100,10 +99,7 @@ public class SessionManagementService {
      */
     @Transactional
     public void revokeOtherRefreshTokens(User user, String currentToken) {
-        log.debug("Отзыв других refresh токенов для пользователя: {}", user.getEmail());
-        
         int revokedCount = refreshTokenRepository.revokeAllByUserExcept(user, currentToken, OffsetDateTime.now());
-        log.info("Отозвано {} других refresh токенов для пользователя: {}", revokedCount, user.getEmail());
     }
 
     public List<RefreshToken> getActiveSessions(User user) {

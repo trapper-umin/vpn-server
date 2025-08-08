@@ -19,7 +19,7 @@ import static server.vpn.com.auth.util.enums.Constant.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

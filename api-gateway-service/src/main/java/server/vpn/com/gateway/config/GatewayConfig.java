@@ -29,7 +29,7 @@ public class GatewayConfig {
         return builder.routes()
                 // Публичные маршруты для аутентификации (без JWT проверки)
                 .route("auth-register", r -> r
-                        .path("/api/auth/register")
+                        .path("/api/v1/auth/register")
                         .and()
                         .method("POST")
                         .filters(f -> f
@@ -40,7 +40,7 @@ public class GatewayConfig {
                         .uri(userManagementServiceUrl)
                 )
                 .route("auth-login", r -> r
-                        .path("/api/auth/login")
+                        .path("/api/v1/auth/login")
                         .and()
                         .method("POST")
                         .filters(f -> f
@@ -51,7 +51,7 @@ public class GatewayConfig {
                         .uri(userManagementServiceUrl)
                 )
                 .route("auth-refresh", r -> r
-                        .path("/api/auth/refresh")
+                        .path("/api/v1/auth/refresh")
                         .and()
                         .method("POST")
                         .filters(f -> f
@@ -63,7 +63,7 @@ public class GatewayConfig {
                 )
                 // Защищенные маршруты с JWT аутентификацией
                 .route("auth-profile", r -> r
-                        .path("/api/auth/profile")
+                        .path("/api/v1/auth/profile")
                         .and()
                         .method("GET")
                         .filters(f -> f
@@ -76,7 +76,7 @@ public class GatewayConfig {
                 )
                 // Общий защищенный маршрут для остальных операций с пользователями
                 .route("user-management-protected", r -> r
-                        .path("/api/auth/**")
+                        .path("/api/v1/auth/**")
                         .and()
                         .not(p -> p.path("/api/auth/register"))
                         .and()
@@ -90,17 +90,6 @@ public class GatewayConfig {
                                 .addRequestHeader("X-Route-Name", "user-management-protected")
                         )
                         .uri(userManagementServiceUrl)
-                )
-                // VPN Management Service маршруты (защищенные)
-                .route("vpn-management-seller", r -> r
-                        .path("/api/vpn/seller/**")
-                        .filters(f -> f
-                                .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
-                                .stripPrefix(0)
-                                .addRequestHeader("X-Gateway-Source", "api-gateway")
-                                .addRequestHeader("X-Route-Name", "vpn-management-seller")
-                        )
-                        .uri(vpnManagementServiceUrl)
                 )
                 // VPN Management Service пользовательские маршруты (защищенные)
                 .route("vpn-management-user", r -> r

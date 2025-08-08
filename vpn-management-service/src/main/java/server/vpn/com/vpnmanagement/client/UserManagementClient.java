@@ -33,7 +33,7 @@ public class UserManagementClient {
      */
     public UserProfileDto getUserProfile(String authHeader) {
         try {
-            String url = userManagementServiceUrl + "/api/auth/profile";
+            String url = userManagementServiceUrl + "/api/v1/auth/profile";
             
             HttpHeaders headers = new HttpHeaders();
             headers.set(HttpHeaders.AUTHORIZATION, authHeader);
