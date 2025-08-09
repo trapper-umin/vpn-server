@@ -14,18 +14,16 @@ import server.vpn.com.gateway.filter.JwtAuthenticationFilter;
 @RequiredArgsConstructor
 public class GatewayConfig {
 
-    @Value("${services.user-management.url:http://localhost:8081}")
+    @Value("${services.user-management-service.url:http://localhost:8081}")
     private String userManagementServiceUrl;
 
-    @Value("${services.vpn-management.url:http://localhost:8082}")
-    private String vpnManagementServiceUrl;
+    @Value("${services.server-management-service.url:http://localhost:8082}")
+    private String serverManagementServiceUrl;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-        log.info("Настройка маршрутов Gateway с JWT фильтрами");
-        
         return builder.routes()
                 // Публичные маршруты для аутентификации (без JWT проверки)
                 .route("auth-register", r -> r
@@ -78,11 +76,11 @@ public class GatewayConfig {
                 .route("user-management-protected", r -> r
                         .path("/api/v1/auth/**")
                         .and()
-                        .not(p -> p.path("/api/auth/register"))
+                        .not(p -> p.path("/api/v1/auth/register"))
                         .and()
-                        .not(p -> p.path("/api/auth/login"))
+                        .not(p -> p.path("/api/v1/auth/login"))
                         .and()
-                        .not(p -> p.path("/api/auth/refresh"))
+                        .not(p -> p.path("/api/v1/auth/refresh"))
                         .filters(f -> f
                                 .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
                                 .stripPrefix(0)
@@ -91,7 +89,7 @@ public class GatewayConfig {
                         )
                         .uri(userManagementServiceUrl)
                 )
-                // VPN Management Service пользовательские маршруты (защищенные)
+                // server-management-service пользовательские маршруты (защищенные)
                 .route("vpn-management-user", r -> r
                         .path("/api/v1/servers/**", "/api/v1/sellers/**", "/api/v1/users/**")
                         .filters(f -> f
@@ -100,7 +98,7 @@ public class GatewayConfig {
                                 .addRequestHeader("X-Gateway-Source", "api-gateway")
                                 .addRequestHeader("X-Route-Name", "vpn-management-service")
                         )
-                        .uri(vpnManagementServiceUrl)
+                        .uri(serverManagementServiceUrl)
                 )
                 // VPN Management Service маркетплейс (публичные)
                 .route("vpn-management-marketplace", r -> r
@@ -110,7 +108,7 @@ public class GatewayConfig {
                                 .addRequestHeader("X-Gateway-Source", "api-gateway")
                                 .addRequestHeader("X-Route-Name", "vpn-management-marketplace")
                         )
-                        .uri(vpnManagementServiceUrl)
+                        .uri(serverManagementServiceUrl)
                 )
                 // Health check маршруты для обоих сервисов
                 .route("health-check-user", r -> r
@@ -127,7 +125,7 @@ public class GatewayConfig {
                                 .stripPrefix(2) // убираем /actuator/health/vpn -> /actuator/health
                                 .addRequestHeader("X-Gateway-Source", "api-gateway")
                         )
-                        .uri(vpnManagementServiceUrl)
+                        .uri(serverManagementServiceUrl)
                 )
                 // Общий health check (проверяет user-management по умолчанию)
                 .route("health-check", r -> r

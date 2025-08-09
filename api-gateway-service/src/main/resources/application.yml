@@ -29,9 +29,9 @@ management:
 
 # Service URLs Configuration
 services:
-  user-management:
+  user-management-service:
     url: ${USER_MANAGEMENT_SERVICE_URL:http://localhost:8081}
-  vpn-management:
+  server-management-service:
     url: ${VPN_MANAGEMENT_SERVICE_URL:http://localhost:8082}
 
 # JWT Configuration (должен совпадать с user-management-service)
