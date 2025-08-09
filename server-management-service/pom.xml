@@ -11,7 +11,7 @@
 
     <artifactId>server-management-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>vpn-management-service</name>
+    <name>server-management-service</name>
     <description>vpn-management-service</description>
 
     <properties>
