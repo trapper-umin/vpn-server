@@ -9,7 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>vpn-management-service</artifactId>
+    <artifactId>server-management-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>vpn-management-service</name>
     <description>vpn-management-service</description>

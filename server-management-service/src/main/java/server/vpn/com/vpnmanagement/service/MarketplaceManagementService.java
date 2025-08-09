@@ -21,7 +21,6 @@ import server.vpn.com.vpnmanagement.repository.VpnSubscriptionRepository;
 import server.vpn.com.vpnmanagement.util.JwtUtil;
 
 import java.math.BigDecimal;
-import java.net.http.HttpRequest;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
