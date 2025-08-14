@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -12,17 +14,42 @@ import lombok.NoArgsConstructor;
 public class ServerConnectionResponse {
 
     private Boolean success;
-    private String error;
-    private ServerInfo serverInfo;
+    
+    private ConnectionChecks checks;
+    
+    private ConnectionDetails details;
+    
+    @Builder.Default
+    private List<String> warnings = List.of();
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ServerInfo {
-        private String ip;
-        private String os;
-        private String region;
-        private String provider;
+    public static class ConnectionChecks {
+        private Boolean dns;
+        private Boolean tcp;
+        private Boolean sshHandshake;
+        private Boolean auth;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ConnectionDetails {
+        private String resolvedIp;
+        private Long latencyMs;
+        private String sshBanner;
+        private HostKeyInfo hostKey;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class HostKeyInfo {
+        private String type;
+        private String fingerprintSha256;
     }
 }

@@ -1,6 +1,7 @@
 package server.vpn.com.servermanagement.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import server.vpn.com.servermanagement.dto.request.ServerConnectionRequest;
@@ -12,43 +13,32 @@ import server.vpn.com.servermanagement.util.JwtUtil;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ServerDeploymentProcessService {
 
     private final JwtUtil jwtUtil;
+    private final SshConnectionService sshConnectionService;
 
     public ServerConnectionResponse testServerConnection(Authentication authentication, ServerConnectionRequest request) {
         UUID sellerId = jwtUtil.extractUserIdFromEmail(authentication.getName());
 
-        // Здесь должна быть реальная логика подключения к серверу
-        // Пока возвращаем мок данные
         try {
-            // Симуляция проверки подключения
-            Thread.sleep(2000); // Имитация задержки
 
-            ServerConnectionResponse.ServerInfo serverInfo = ServerConnectionResponse.ServerInfo.builder()
-                    .ip(request.getIp())
-                    .os("Ubuntu 22.04 LTS")
-                    .region("Unknown")
-                    .provider("Generic VPS")
-                    .build();
+            return sshConnectionService.testConnection(request);
 
-            return ServerConnectionResponse.builder()
-                    .success(true)
-                    .serverInfo(serverInfo)
-                    .build();
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return ServerConnectionResponse.builder()
-                    .success(false)
-                    .error("Прервано тестирование подключения")
-                    .build();
         } catch (Exception e) {
             return ServerConnectionResponse.builder()
                     .success(false)
-                    .error("Не удалось подключиться к серверу: " + e.getMessage())
+                    .checks(ServerConnectionResponse.ConnectionChecks.builder()
+                            .dns(false)
+                            .tcp(false)
+                            .sshHandshake(false)
+                            .auth(false)
+                            .build())
+                    .details(new ServerConnectionResponse.ConnectionDetails())
+                    .warnings(List.of("Внутренняя ошибка сервера: " + e.getMessage()))
                     .build();
         }
     }

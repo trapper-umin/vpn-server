@@ -1,7 +1,8 @@
 package server.vpn.com.servermanagement.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +14,70 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ServerConnectionRequest {
 
-    @NotBlank(message = "IP адрес обязателен")
-    @Pattern(regexp = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", 
-             message = "Неверный формат IP адреса")
-    private String ip;
+    @NotNull(message = "SSH конфигурация обязательна")
+    @Valid
+    private SshConfig ssh;
 
-    @NotBlank(message = "Root пароль обязателен")
-    private String rootPassword;
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SshConfig {
+        
+        @NotNull(message = "Хост обязателен")
+        private String host;
+        
+        @Builder.Default
+        private Integer port = 22;
+        
+        @NotNull(message = "Пользователь обязателен")
+        private String user;
+        
+        @NotNull(message = "Тип аутентификации обязателен")
+        private AuthType auth;
+        
+        // Для auth = "password"
+        private String password;
+        
+        // Для auth = "key"
+        private String privateKey;
+        private String passphrase;
+        
+        // Дополнительно для sudo операций
+        private String sudoPassword;
+        
+        // Настройки проверки хост-ключа
+        @Valid
+        @Builder.Default
+        private HostKeyConfig hostKey = HostKeyConfig.builder()
+                .verify(HostKeyVerifyType.accept_new)
+                .build();
+    }
+    
+    public enum AuthType {
+        password, key
+    }
+    
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class HostKeyConfig {
+        
+        @Builder.Default
+        private HostKeyVerifyType verify = HostKeyVerifyType.accept_new;
+        
+        private String fingerprintSha256;
+    }
+    
+    public enum HostKeyVerifyType {
+        @JsonProperty("accept-new")
+        accept_new,
+        
+        @JsonProperty("strict") 
+        strict,
+        
+        @JsonProperty("insecure")
+        insecure
+    }
 }
