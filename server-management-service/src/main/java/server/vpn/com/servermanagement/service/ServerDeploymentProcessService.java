@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import server.vpn.com.servermanagement.dto.request.ServerConnectionRequest;
+import server.vpn.com.servermanagement.dto.request.WireGuardDeploymentRequest;
 import server.vpn.com.servermanagement.dto.response.ServerConnectionResponse;
 import server.vpn.com.servermanagement.dto.response.ServerTestingResponse;
 import server.vpn.com.servermanagement.dto.response.WireGuardDeploymentResponse;
@@ -43,7 +44,7 @@ public class ServerDeploymentProcessService {
         }
     }
 
-    public WireGuardDeploymentResponse deployWireGuard(Authentication authentication, String serverIp) {
+    public WireGuardDeploymentResponse deployWireGuard(Authentication authentication, WireGuardDeploymentRequest request) {
         UUID sellerId = jwtUtil.extractUserIdFromEmail(authentication.getName());
 
         // Здесь должна быть реальная логика развертывания WireGuard
@@ -79,6 +80,7 @@ public class ServerDeploymentProcessService {
                     .build();
 
         } catch (Exception e) {
+            log.error("Ошибка при развертывании WireGuard: {}", e.getMessage(), e);
             return WireGuardDeploymentResponse.builder()
                     .success(false)
                     .error("Ошибка развертывания: " + e.getMessage())

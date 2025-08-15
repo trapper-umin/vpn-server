@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import server.vpn.com.servermanagement.dto.request.ServerConnectionRequest;
+import server.vpn.com.servermanagement.dto.request.WireGuardDeploymentRequest;
 import server.vpn.com.servermanagement.dto.response.ServerConnectionResponse;
 import server.vpn.com.servermanagement.dto.response.ServerTestingResponse;
 import server.vpn.com.servermanagement.dto.response.WireGuardDeploymentResponse;
@@ -34,10 +35,10 @@ public class ServerDeploymentProcessController {
      * Развертывание WireGuard на сервере
      */
     @PostMapping("/deploy-wireguard") //
-    public ResponseEntity<WireGuardDeploymentResponse> deployWireGuard(@RequestParam String serverIp,
+    public ResponseEntity<WireGuardDeploymentResponse> deployWireGuard(@Valid @RequestBody WireGuardDeploymentRequest request,
                                                                        Authentication authentication) {
 
-        WireGuardDeploymentResponse result = serverDeploymentProcessService.deployWireGuard(authentication, serverIp);
+        WireGuardDeploymentResponse result = serverDeploymentProcessService.deployWireGuard(authentication, request);
 
         return ResponseEntity.ok(result);
     }
