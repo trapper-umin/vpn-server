@@ -3,7 +3,6 @@ package server.vpn.com.servermanagement.dto.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import server.vpn.com.servermanagement.dto.request.ServerConnectionRequest;
 
 /**
  * DTO для запроса развертывания WireGuard на сервере
